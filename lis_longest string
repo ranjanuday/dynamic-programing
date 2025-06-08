@@ -1,0 +1,46 @@
+class Solution {
+public:
+
+/* this cmp for sorting the array on the based of the length of the string size eg - ab < abc 2<3 then ab,abc*/
+    static bool cmp(string& s1, string& s2) {
+        return s1.size() < s2.size();
+    }
+/* this is to find the subsequence eg ab ,abc if i is equal to m  */
+    bool is_sub(string& s1, string& s2) {
+        if (s2.length() != s1.length() + 1) return false;
+
+        int i = 0, j = 0;
+        while (i < s1.size() && j < s2.size()) {
+            if (s1[i] == s2[j]) {
+                i++;
+            }
+            j++;
+        }
+
+        return i == s1.size();
+    }
+/* this simple lis */
+    int solve(vector<string>& words, int prev_idx, int idx, int n, vector<vector<int>>& dp) {
+        if (idx >= n) return 0;
+
+        if (dp[prev_idx + 1][idx] != -1) return dp[prev_idx + 1][idx];
+
+        int include = 0, exclude = 0;
+        if (prev_idx == -1 || is_sub(words[prev_idx], words[idx])) {
+            include = 1 + solve(words, idx, idx + 1, n, dp);
+        }
+
+        exclude = solve(words, prev_idx, idx + 1, n, dp);
+
+        return dp[prev_idx + 1][idx] = max(include, exclude);
+    }
+
+    int longestStrChain(vector<string>& words) {
+        int n = words.size();
+        sort(words.begin(), words.end(), cmp);
+/* here prev_idx and idx is changing thats why 2d for nemo */
+        vector<vector<int>> dp(n + 1, vector<int>(n, -1));
+        return solve(words, -1, 0, n, dp);
+    }
+};
+intitution - longest give hint for lis and also a ba bca  this you can take and skip just like subsequence to find the maxi longest
